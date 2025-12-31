@@ -6,60 +6,56 @@
 /*   By: alvila <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 17:17:10 by alvila            #+#    #+#             */
-/*   Updated: 2025/11/18 20:26:43 by alvila           ###   ########.fr       */
+/*   Updated: 2025/12/31 17:10:01 by alvila           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static int	ft_pf_puthex_rec(unsigned int n, int uppercase)
+int	ft_pf_puthex(unsigned int n, int uppercase)
 {
 	char	*base;
+	char	buf[16];
+	int		i;
 	int		len;
-	int		ret;
 
 	if (uppercase)
 		base = "0123456789ABCDEF";
 	else
 		base = "0123456789abcdef";
-	len = 0;
-	if (n >= 16)
+	i = 0;
+	if (n == 0)
+		return (ft_pf_putchar('0'));
+	while (n > 0)
 	{
-		ret = ft_pf_puthex_rec(n / 16, uppercase);
-		if (ret == -1)
-			return (-1);
-		len += ret;
+		buf[i++] = base[n % 16];
+		n /= 16;
 	}
-	ret = ft_pf_putchar(base[n % 16]);
-	if (ret == -1)
-		return (-1);
-	return (len + 1);
+	len = i;
+	while (--i >= 0)
+		ft_pf_putchar(buf[i]);
+	return (len);
 }
 
-int	ft_pf_puthex(unsigned int n, int uppercase)
+static int	ft_pf_putptr_hex(unsigned long n)
 {
-	return (ft_pf_puthex_rec(n, uppercase));
-}
-
-static int	ft_pf_putptr_rec(unsigned long n)
-{
+	char	buf[16];
 	char	*base;
+	int		i;
 	int		len;
-	int		ret;
 
 	base = "0123456789abcdef";
-	len = 0;
-	if (n >= 16)
+	i = 0;
+	while (n > 0)
 	{
-		ret = ft_pf_putptr_rec(n / 16);
-		if (ret == -1)
-			return (-1);
-		len += ret;
+		buf[i++] = base[n % 16];
+		n /= 16;
 	}
-	ret = ft_pf_putchar(base[n % 16]);
-	if (ret == -1)
-		return (-1);
-	return (len + 1);
+	len = i;
+	while (--i >= 0)
+		if (ft_pf_putchar(buf[i]) == -1)
+			return (-1);
+	return (len);
 }
 
 int	ft_pf_putptr(void *p)
@@ -68,18 +64,13 @@ int	ft_pf_putptr(void *p)
 	int				len;
 	int				ret;
 
+	if (p == NULL)
+		return (ft_pf_putstr("(nil)"));
 	n = (unsigned long)p;
-	if (n == 0)
-	{
-		len = (ft_pf_putstr("(nil)"));
-		if (len == -1)
-			return (-1);
-		return (len);
-	}
 	len = ft_pf_putstr("0x");
 	if (len == -1)
 		return (-1);
-	ret = ft_pf_putptr_rec(n);
+	ret = ft_pf_putptr_hex(n);
 	if (ret == -1)
 		return (-1);
 	return (len + ret);

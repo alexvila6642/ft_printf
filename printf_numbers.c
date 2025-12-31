@@ -6,77 +6,56 @@
 /*   By: alvila <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 17:16:44 by alvila            #+#    #+#             */
-/*   Updated: 2025/11/14 17:41:02 by alvila           ###   ########.fr       */
+/*   Updated: 2025/12/31 17:14:36 by alvila           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static int	ft_pf_putnbr_rec(long n)
+int	ft_pf_putunbr(unsigned int n)
 {
-	char	c;
+	char	buf[10];
+	int		i;
+	int		ret;
 	int		len;
-	int		res;
 
+	i = 0;
 	len = 0;
-	if (n >= 10)
+	if (n == 0)
+		return (ft_pf_putchar('0'));
+	while (n > 0)
 	{
-		res = ft_pf_putnbr_rec(n / 10);
-		if (res == -1)
-			return (-1);
-		len += res;
+		buf[i++] = '0' + (n % 10);
+		n /= 10;
 	}
-	c = (char)('0' + (n % 10));
-	res = ft_pf_putchar(c);
-	if (res == -1)
-		return (-1);
-	return (len + 1);
+	while (--i >= 0)
+	{
+		ret = ft_pf_putchar(buf[i]);
+		if (ret == -1)
+			return (-1);
+		len += ret;
+	}
+	return (len);
 }
 
 int	ft_pf_putnbr(int n)
 {
-	long	nb;
-	int		len;
-	int		res;
-
-	nb = (long)n;
-	len = 0;
-	if (nb < 0)
-	{
-		res = ft_pf_putchar('-');
-		if (res == -1)
-			return (-1);
-		len += res;
-		nb = -nb;
-	}
-	res = ft_pf_putnbr_rec(nb);
-	if (res == -1)
-		return (-1);
-	return (len + res);
-}
-
-static int	ft_pf_putunbr_rec(unsigned int n)
-{
-	char	c;
-	int		len;
-	int		res;
+	int	ret;
+	int	len;
 
 	len = 0;
-	if (n >= 10)
+	if (n < 0)
 	{
-		res = ft_pf_putunbr_rec(n / 10);
-		if (res == -1)
+		ret = ft_pf_putchar('-');
+		if (ret == -1)
 			return (-1);
-		len += res;
+		len += ret;
+		if (n == -2147483648)
+			return (len + ft_pf_putunbr(2147483648u));
+		n = -n;
 	}
-	c = (char)('0' + (n % 10));
-	res = ft_pf_putchar(c);
-	if (res == -1)
+	ret = ft_pf_putunbr((unsigned int)n);
+	if (ret == -1)
 		return (-1);
-	return (len + 1);
-}
-
-int	ft_pf_putunbr(unsigned int n)
-{
-	return (ft_pf_putunbr_rec(n));
+	return (len + ret);
 }
