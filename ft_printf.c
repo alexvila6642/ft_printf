@@ -6,7 +6,7 @@
 /*   By: alvila <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 17:18:04 by alvila            #+#    #+#             */
-/*   Updated: 2025/11/17 17:10:13 by alvila           ###   ########.fr       */
+/*   Updated: 2026/01/06 13:34:37 by alvila           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static int	ft_pf_conv(char c, va_list ap)
 {
 	if (c == 'c')
-		return (ft_pf_putchar((char)va_arg(ap, int)));
+		return (ft_pf_putchar(va_arg(ap, int)));
 	if (c == 's')
 		return (ft_pf_putstr(va_arg(ap, char *)));
 	if (c == 'p')
@@ -33,7 +33,7 @@ static int	ft_pf_conv(char c, va_list ap)
 	return (0);
 }
 
-static int	ft_pf_vprintf(const char *fmt, va_list ap)
+static int	ft_vprintf(const char *fmt, va_list ap)
 {
 	int	i;
 	int	len;
@@ -66,7 +66,7 @@ int	ft_printf(const char *fmt, ...)
 	if (!fmt)
 		return (0);
 	va_start(ap, fmt);
-	len = ft_pf_vprintf(fmt, ap);
+	len = ft_vprintf(fmt, ap);
 	va_end(ap);
 	return (len);
 }
